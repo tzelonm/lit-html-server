@@ -1,4 +1,4 @@
-/* eslint no-constant-condition:0 */
+/* eslint no-constant-condition:0, no-async-promise-executor:0 */
 import 'web-streams-polyfill';
 import { html as h, renderToStream, renderToString } from '../browser/index.js';
 import { createAsyncIterable } from './utils.js';
@@ -36,6 +36,12 @@ function getStream(stream) {
 
 describe('Browser template render', () => {
   describe('text', () => {
+    it('should render primitive content', async () => {
+      const result = () => 'text';
+      const expected = 'text';
+      expect(await renderToString(result())).to.equal(expected);
+      expect(await getStream(renderToStream(result()))).to.equal(expected);
+    });
     it('should render a plain text template', async () => {
       const result = () => h`text`;
       const expected = 'text';

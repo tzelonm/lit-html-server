@@ -48,34 +48,55 @@ function html(strings, ...values) {
 }
 
 /**
- * Render a template result to a Readable stream
+ * Render a TemplateResult (or any valid template value) to a Readable stream
  * *Note* that TemplateResults are single use, and can only be rendered once.
  *
- * @param { TemplateResult } result - a template result returned from call to "html`...`"
+ * @param { TemplateResult } result
  * @returns { Readable }
  */
 function renderToStream(result) {
-  return new StreamTemplateRenderer(result, defaultTemplateResultProcessor);
+  return new StreamTemplateRenderer(getTemplateResult(result), defaultTemplateResultProcessor);
 }
 
 /**
- * Render a template result to a string resolving Promise.
+ * Render a TemplateResult (or any valid template value) to a string resolving Promise.
  * *Note* that TemplateResults are single use, and can only be rendered once.
  *
- * @param { TemplateResult } result - a template result returned from call to "html`...`"
+ * @param { TemplateResult } result
  * @returns { Promise<string> }
  */
 function renderToString(result) {
-  return new PromiseTemplateRenderer(result, defaultTemplateResultProcessor, false);
+  return new PromiseTemplateRenderer(
+    getTemplateResult(result),
+    defaultTemplateResultProcessor,
+    false
+  );
 }
 
 /**
- * Render a template result to a Buffer resolving Promise.
+ * Render a TemplateResult (or any valid template value) to a Buffer resolving Promise.
  * *Note* that TemplateResults are single use, and can only be rendered once.
  *
- * @param { TemplateResult } result - a template result returned from call to "html`...`"
+ * @param { TemplateResult } result
  * @returns { Promise<Buffer> }
  */
 function renderToBuffer(result) {
-  return new PromiseTemplateRenderer(result, defaultTemplateResultProcessor, true);
+  return new PromiseTemplateRenderer(
+    getTemplateResult(result),
+    defaultTemplateResultProcessor,
+    true
+  );
+}
+
+/**
+ * Retrieve TemplateResult instance from "result"
+ *
+ * @param { TemplateResult | unknown } result
+ */
+function getTemplateResult(result) {
+  if (!isTemplateResult(result)) {
+    result = html(['', ''], result);
+  }
+
+  return result;
 }
